@@ -39,9 +39,12 @@ bot.api.getMe().then((me) => {
                 }, sunriseTimeout);
             }
 
-            // if (sunsetTimeout > 0) {
-            //     setTimeout(() => { }, sunsetTimeout);
-            // }
+            // Sunset task
+            if (sunsetTimeout > 0) {
+                setTimeout(() => {
+                    sendToEachChat("CAACAgUAAx0CS7SzgQABB4UkZ4vAMRzrildshqv3f0zQeZVYKlcAAgQXAAJxj2BU3JTJSWJFj602BA");
+                }, sunsetTimeout);
+            }
 
             console.log(`Sunrise: ${sunrise}`);
         });
@@ -64,7 +67,7 @@ bot.api.getMe().then((me) => {
     bot.on("message", (ctx) => {
         const chatId = ctx.chat.id;
 
-        // console.log(ctx.message);
+        console.log(ctx.message);
 
         switch (ctx.message.text) {
             case "?": case "？":
