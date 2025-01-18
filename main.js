@@ -55,11 +55,16 @@ bot.api.getMe().then((me) => {
             console.log(`New chat ${chat.title} (${ctx.chat.id})`);
         });
 
+        // Hello
+        bot.api.sendSticker(ctx.chat.id, "CAACAgUAAx0CUjooDgABAiamZ4u3RX5hFRenn5UuvBdOnrgJtJQAApMYAAIb9phX8VH8V8j7IyY2BA");
+
         fs.writeFileSync("config.json", JSON.stringify(config, null, 4));
     })
 
     bot.on("message", (ctx) => {
         const chatId = ctx.chat.id;
+
+        // console.log(ctx.message);
 
         switch (ctx.message.text) {
             case "?": case "？":
@@ -70,10 +75,6 @@ bot.api.getMe().then((me) => {
                 break;
         }
     })
-
-    // bot.on("message:sticker", (ctx) => {
-    //     console.log(ctx.message);
-    // })
 });
 
 bot.start()
