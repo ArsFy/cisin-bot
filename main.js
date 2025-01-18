@@ -12,6 +12,39 @@ const sendToEachChat = (fileId) => {
     }
 }
 
+let sunriseTask, sunsetTask;
+
+const sunTask = () => {
+    axios.get("https://api.sunrise-sunset.org/json?lat=22.3193&lng=114.1694&date=today&formatted=0").then((response) => {
+        const data = response.data.results;
+
+        const sunrise = new Date(data.sunrise);
+        const sunset = new Date(data.sunset);
+
+        const now = new Date();
+        const sunriseTimeout = sunrise.getTime() - now.getTime();
+        const sunsetTimeout = sunset.getTime() - now.getTime();
+
+        // Sunrise task
+        clearTimeout(sunriseTask);
+        if (sunriseTimeout > 0) {
+            sunriseTask = setTimeout(() => {
+                sendToEachChat("CAACAgUAAxkBAAMHZ4ut-28xMqYvC4wXYwVVoZbuhaMAAogUAAIsOUhUyqEiJeTyByE2BA");
+            }, sunriseTimeout);
+        }
+
+        // Sunset task
+        clearTimeout(sunsetTask);
+        if (sunsetTimeout > 0) {
+            sunsetTask = setTimeout(() => {
+                sendToEachChat("CAACAgUAAx0CS7SzgQABB4UkZ4vAMRzrildshqv3f0zQeZVYKlcAAgQXAAJxj2BU3JTJSWJFj602BA");
+            }, sunsetTimeout);
+        }
+
+        console.log(`Sunrise: ${sunrise}, Sunset: ${sunset}`);
+    });
+}
+
 bot.api.getMe().then((me) => {
     console.log(`Bot is running as @${me.username}`);
 
@@ -21,34 +54,8 @@ bot.api.getMe().then((me) => {
         });
     }
 
-    cron.schedule("0 0 * * *", () => {
-        axios.get("https://api.sunrise-sunset.org/json?lat=22.3193&lng=114.1694&date=today&formatted=0").then((response) => {
-            const data = response.data.results;
-
-            const sunrise = new Date(data.sunrise);
-            const sunset = new Date(data.sunset);
-
-            const now = new Date();
-            const sunriseTimeout = sunrise.getTime() - now.getTime();
-            const sunsetTimeout = sunset.getTime() - now.getTime();
-
-            // Sunrise task
-            if (sunriseTimeout > 0) {
-                setTimeout(() => {
-                    sendToEachChat("CAACAgUAAxkBAAMHZ4ut-28xMqYvC4wXYwVVoZbuhaMAAogUAAIsOUhUyqEiJeTyByE2BA");
-                }, sunriseTimeout);
-            }
-
-            // Sunset task
-            if (sunsetTimeout > 0) {
-                setTimeout(() => {
-                    sendToEachChat("CAACAgUAAx0CS7SzgQABB4UkZ4vAMRzrildshqv3f0zQeZVYKlcAAgQXAAJxj2BU3JTJSWJFj602BA");
-                }, sunsetTimeout);
-            }
-
-            console.log(`Sunrise: ${sunrise}`);
-        });
-    })
+    sunTask();
+    cron.schedule("0 0 * * *", sunTask);
 
     bot.on(":new_chat_members:me", (ctx) => {
         config.groups.push(ctx.chat.id);
