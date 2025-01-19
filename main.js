@@ -74,7 +74,7 @@ bot.api.getMe().then((me) => {
     bot.on("message", (ctx) => {
         const chatId = ctx.chat.id;
 
-        console.log(ctx.message);
+        // console.log(ctx.message);
 
         switch (ctx.message.text) {
             case "?": case "？":
