@@ -6,9 +6,13 @@ import cron from "node-cron";
 const config = JSON.parse(fs.readFileSync("config.json"));
 const bot = new Bot(config.token);
 
-const sendToEachChat = (fileId) => {
+const sendToEachChat = async (fileId) => {
     for (const chatId of config.groups) {
-        bot.api.sendSticker(chatId, fileId);
+        await bot.api.sendSticker(chatId, fileId);
+
+        await new Promise((resolve) => {
+            setTimeout(resolve, 1000);
+        });
     }
 }
 
@@ -41,7 +45,8 @@ const sunTask = () => {
             }, sunsetTimeout);
         }
 
-        console.log(`Sunrise: ${sunrise}, Sunset: ${sunset}`);
+        console.log(`Sunrise: ${sunrise}  (${sunriseTimeout / 1000})`);
+        console.log(`Sunset: ${sunset}  (${sunsetTimeout / 1000})`);
     });
 }
 
@@ -55,7 +60,10 @@ bot.api.getMe().then((me) => {
     }
 
     sunTask();
-    cron.schedule("0 0 * * *", sunTask);
+    cron.schedule("30 0 * * *", sunTask);
+    cron.schedule("30 23 * * *", () => {
+        sendToEachChat("CAACAgUAAx0CUjooDgABAibGZ4vPZq5wYlfeOIAbmHTafNCKk-EAAisTAALElpFXFW1z02k2QoA2BA")
+    });
 
     bot.on(":new_chat_members:me", (ctx) => {
         config.groups.push(ctx.chat.id);
